@@ -1,8 +1,11 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
+const session = require('express-session')
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const route = require('./routes')
+
+const usePassport = require('./config/passport')
 
 const app = express()
 const PORT = 8080
@@ -15,11 +18,13 @@ app.use(express.static('public'))
 //methodOverride
 app.use(methodOverride('_method'))
 
+app.use(session({
+  secret: 'blackSwan',
+  resave: false,
+  saveUninitialized: true
+}))
 
-//route
-app.get('/', (req, res) => {
-  res.render('index')
-})
+usePassport(app)
 
 app.use(route)
 

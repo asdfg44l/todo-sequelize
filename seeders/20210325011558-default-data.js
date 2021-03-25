@@ -11,7 +11,7 @@ module.exports = {
       {
         name: SEED_USER.name,
         email: SEED_USER.email,
-        password: '',
+        password: SEED_USER.password,
         createdAt: new Date(),
         updatedAt: new Date()
       }
