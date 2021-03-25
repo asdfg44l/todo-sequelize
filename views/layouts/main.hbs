@@ -9,27 +9,30 @@
   <link rel="stylesheet" href="https://bootswatch.com/4/journal/bootstrap.min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
     integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/custom.css">
 </head>
 
-<body class="bg-light border-0">
-  <header>
-    <nav class="navbar navbar-dark bg-primary justify-content-between">
-      <a class="navbar-brand" href="/">
-        {{#if isAuthenticated}} {{ user.name }}'s {{/if}}
-        Todo List
-      </a>
-      {{#if isAuthenticated}}
-      <a href="/users/logout" class="btn btn-outline-light">Logout</a>
-      {{else}}
-      <a href="/users/login" class="btn btn-outline-light">Login</a>
-      {{/if}}
-    </nav>
-  </header>
-  <main>
-    <div class="container mt-3">
-      {{{body}}}
-    </div>
-  </main>
+<body>
+  <div class="bg-light min-vh-100">
+    <header>
+      <nav class="navbar navbar-dark bg-primary justify-content-between">
+        <a class="navbar-brand" href="/">
+          {{#if isAuthenticated}} {{ user.name }}'s {{/if}}
+          Todo List
+        </a>
+        {{#if isAuthenticated}}
+        <a href="/users/logout" class="btn btn-outline-light">Logout</a>
+        {{else}}
+        <a href="/users/login" class="btn btn-outline-light">Login</a>
+        {{/if}}
+      </nav>
+    </header>
+    <main>
+      <div class="container mt-3">
+        {{{body}}}
+      </div>
+    </main>
+  </div>
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

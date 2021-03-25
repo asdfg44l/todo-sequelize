@@ -1,6 +1,7 @@
 const express = require('express')
-
 const router = express.Router()
+
+const { User, Todo } = require('../../models')
 
 //登入畫面
 router.get('/login', (req, res) => {
@@ -20,8 +21,9 @@ router.post('/login', (req, res) => {
 
 //註冊功能
 router.post('/register', (req, res) => {
-  console.log('register!')
-  return
+  const { name, email, password, confirmPassword } = req.body
+  User.create({ name, email, password, confirmPassword })
+    .then(() => res.redirect('/'))
 })
 
 
