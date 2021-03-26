@@ -11,16 +11,16 @@ module.exports = (app) => {
   app.use(passport.session());
 
   //本地驗證策略
-  passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
+  passport.use(new LocalStrategy({ usernameField: 'email', passReqToCallback: true }, async (req, email, password, done) => {
     try {
       let user = await User.findOne({ where: { email } })
       if (!user) {
-        return done(null, false, { message: '此帳號尚未註冊' })
+        return done(null, false, req.flash('warning_msg', '此帳號尚未註冊'))
       }
 
       const isAuth = await bcrypt.compare(password, user.password)
       if (!isAuth) {
-        return done(null, false, { message: '帳號或密碼輸入錯誤' })
+        return done(null, false, req.flash('warning_msg', '帳號或密碼輸入錯誤'))
       }
 
       return done(null, user)
@@ -37,9 +37,9 @@ module.exports = (app) => {
   //去序列化
   passport.deserializeUser(async (id, done) => {
     try {
-      let user = User.findByPk(id)
+      let user = await User.findByPk(id)
 
-      return done(null, user)
+      return done(null, user.toJSON())
     } catch (e) {
       return done(e, false)
     }

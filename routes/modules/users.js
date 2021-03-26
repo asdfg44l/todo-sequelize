@@ -26,18 +26,19 @@ router.post('/login', passport.authenticate('local',
 //註冊功能
 router.post('/register', async (req, res) => {
   const { name, email, password, confirmPassword } = req.body
-
-  let user = await User.findOne({ where: { email } })
-  if (user) {
-    console.log('此電子郵件已被註冊')
-    return res.render('register', {
-      name,
-      email,
-      password,
-      confirmPassword
-    })
-  }
+  let errors = []
   try {
+    let user = await User.findOne({ where: { email } })
+    if (user) {
+      errors.push({ message: '此電子郵件已被註冊' })
+      return res.render('register', {
+        name,
+        email,
+        password,
+        confirmPassword,
+        errors
+      })
+    }
     let salt = await bcrypt.genSalt(10)
     let hash = await bcrypt.hash(password, salt)
 
@@ -47,6 +48,13 @@ router.post('/register', async (req, res) => {
   } catch (e) {
     console.warn(e)
   }
+})
+
+//登出
+router.get('/logout', (req, res) => {
+  req.logout()
+  req.flash('success_msg', '您已成功登出')
+  return res.redirect('/users/login')
 })
 
 
