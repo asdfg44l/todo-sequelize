@@ -1,3 +1,4 @@
+require('./config/dotenv').loadEnv()
 const express = require('express')
 const exphbs = require('express-handlebars')
 const session = require('express-session')
@@ -5,11 +6,14 @@ const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const route = require('./routes')
 
+
 const flash = require('connect-flash')
 const usePassport = require('./config/passport')
 
+
+
 const app = express()
-const PORT = 8080
+const PORT = process.env.PORT || 3000
 
 //set view engine
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
@@ -20,7 +24,7 @@ app.use(express.static('public'))
 app.use(methodOverride('_method'))
 
 app.use(session({
-  secret: 'blackSwan',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))

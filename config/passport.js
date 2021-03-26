@@ -1,5 +1,6 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
+const FacebookStrategy = require('passport-facebook').Strategy
 const bcrypt = require('bcryptjs')
 
 //model
@@ -28,6 +29,37 @@ module.exports = (app) => {
       return done(null, false)
     }
   }))
+
+  //Facebook 驗證策略
+  passport.use(new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_ID,
+      clientSecret: process.env.FACEBOOK_SECRET,
+      callbackURL: process.env.FACEBOOK_CALLBACK,
+      profileFields: ['email', 'displayName']
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const { email, name } = profile._json;
+        console.log(profile._json)
+        let user = await User.findOne({ where: { email } })
+        if (user) {
+          return done(null, user)
+        }
+
+        const randomPassword = Math.random().toString(36).slice(-8)
+        let salt = await bcrypt.genSalt(10)
+        let hash = await bcrypt.hash(randomPassword, salt)
+
+        let new_user = await User.create({ name, email, password: hash })
+
+        return done(null, new_user)
+      } catch (e) {
+        return done(err, false)
+      }
+    }
+  )
+  )
 
   //序列化
   passport.serializeUser((user, done) => {

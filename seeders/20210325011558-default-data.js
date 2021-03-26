@@ -7,26 +7,34 @@ const SEED_USER = {
 }
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    let userId = await queryInterface.bulkInsert('Users', [
-      {
-        name: SEED_USER.name,
-        email: SEED_USER.email,
-        password: SEED_USER.password,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ], {})
+    try {
+      let salt = await bcrypt.genSalt(10)
+      let hash = await bcrypt.hash(SEED_USER.password, salt)
 
-    await queryInterface.bulkInsert('Todos',
-      Array.from({ length: 10 }, (_, i) => {
-        return {
-          name: `name-${i}`,
-          UserId: userId,
+      let userId = await queryInterface.bulkInsert('Users', [
+        {
+          name: SEED_USER.name,
+          email: SEED_USER.email,
+          password: hash,
           createdAt: new Date(),
           updatedAt: new Date()
         }
-      })
-      , {})
+      ], {})
+
+      await queryInterface.bulkInsert('Todos',
+        Array.from({ length: 10 }, (_, i) => {
+          return {
+            name: `name-${i}`,
+            UserId: userId,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        })
+        , {})
+    } catch (e) {
+      console.warn(e)
+    }
+
     /**
      * Add seed commands here.
      *
